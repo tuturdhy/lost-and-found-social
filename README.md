@@ -25,7 +25,10 @@
 |---|---|---|
 | React | 18+ | Framework UI |
 | Node.js | 18+ | Runtime |
-| npm / Vite | — | Build & dev server |
+| Vite | — | Build & dev server |
+| React Router | — | Navigation SPA |
+| Context API | — | Gestion d'état global |
+| Axios | — | Appels HTTP vers l'API |
 
 ---
 
@@ -94,9 +97,9 @@ src/main/java/com/lostandfound/
 ├── LostAndFoundApplication.java       # Point d'entrée
 │
 ├── config/
-│   ├── SecurityConfig.java            # Spring Security + JWT + CORS
+│   ├── WebConfig.java                 # CORS et ressources statiques
 │   ├── WebSocketConfig.java           # WebSocket STOMP
-│   └── FileUploadConfig.java          # Servir les photos uploadées
+│   └── FileUploadConfig.java          # Gestion upload images
 │
 ├── entity/
 │   ├── User.java                      # Table users
@@ -114,7 +117,7 @@ src/main/java/com/lostandfound/
 │
 ├── service/
 │   ├── AuthService.java               # Register / Login
-│   ├── ItemService.java               # CRUD + upload photo + trigger matching
+│   ├── ItemService.java               # Publication, upload images, matching auto, objets résolus
 │   ├── MatchingService.java           # Algorithme de matching (score)
 │   ├── NotificationService.java       # Notifications in-app
 │   └── ChatService.java               # Messagerie + WebSocket
@@ -142,8 +145,10 @@ src/main/java/com/lostandfound/
 │       └── UserResponse.java
 │
 ├── security/
+│   ├── SecurityConfig.java            # Configuration Spring Security
 │   ├── JwtUtil.java                   # Génération + validation JWT
-│   └── JwtAuthFilter.java             # Filtre HTTP JWT
+│   ├── JwtAuthFilter.java             # Filtre HTTP JWT
+│   └── CustomUserDetailsService.java  # Chargement utilisateur depuis la BDD
 │
 └── exception/
     └── GlobalExceptionHandler.java    # Gestion globale des erreurs
@@ -353,6 +358,7 @@ Score < 40   →  ignoré
 - Les objets déjà marqués comme **résolus** sont ignorés
 - Les objets appartenant au **même utilisateur** sont exclus
 - Les objets de **catégories différentes** ne sont pas matchés
+- Plusieurs mots-clés communs sont nécessaires pour déclencher un match significatif
 
 ---
 
@@ -366,6 +372,31 @@ Ce dossier est **ignoré par Git** via `.gitignore` afin d'éviter de pousser de
 # .gitignore
 uploads/
 ```
+
+---
+
+## 🗃️ Export SQL
+
+Le fichier `lost_and_found_db.sql` permet de recréer automatiquement la base de données MySQL avec toutes ses tables et relations :
+
+```bash
+mysql -u root -p lost_and_found_db < lost_and_found_db.sql
+```
+
+---
+
+## ✅ Fonctionnalités validées
+
+| Fonctionnalité | Statut |
+|---|---|
+| JWT Authentication | ✅ |
+| Matching intelligent (score + exclusions) | ✅ |
+| Chat temps réel (WebSocket STOMP) | ✅ |
+| Notifications dynamiques avec badges | ✅ |
+| Upload & affichage d'images | ✅ |
+| Profils utilisateurs | ✅ |
+| Géolocalisation (objets proches GPS) | ✅ |
+| Marquage d'objets comme résolus | ✅ |
 
 ---
 
@@ -393,4 +424,4 @@ git push origin feature/mon-ajout
 
 ---
 
-Développé avec ❤️ — Spring Boot · React · MySQL · JWT · WebSocket
+Développé avec ❤️ — Spring Boot · React · MySQL · JWT · WebSocket · Vite
