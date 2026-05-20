@@ -1,40 +1,62 @@
-# 🔍 Lost & Found Social — Spring Boot API
+# 🔍 Lost & Found Social — Plateforme complète
 
-API REST complète pour l'application Lost & Found Social.
-Même concept que l'app Flutter, mais côté backend Java.
+> Plateforme web/mobile de mise en relation entre personnes ayant perdu ou trouvé un objet.
+> Backend Spring Boot · Frontend React · Matching intelligent · Chat temps réel
 
 ---
 
 ## 🛠️ Stack Technique
 
+### Backend
 | Technologie | Version | Rôle |
 |---|---|---|
 | Java | 17 | Langage |
 | Spring Boot | 3.2.0 | Framework |
 | Spring Security | 6 | Sécurité |
 | JWT (JJWT) | 0.11.5 | Authentification |
-| Spring Data JPA | - | ORM |
+| Spring Data JPA | — | ORM |
 | MySQL | 8+ | Base de données |
-| WebSocket (STOMP) | - | Chat temps réel |
-| Lombok | - | Réduction boilerplate |
-| Maven | - | Build |
+| WebSocket (STOMP) | — | Chat temps réel |
+| Lombok | — | Réduction boilerplate |
+| Maven | — | Build |
+
+### Frontend
+| Technologie | Version | Rôle |
+|---|---|---|
+| React | 18+ | Framework UI |
+| Node.js | 18+ | Runtime |
+| npm / Vite | — | Build & dev server |
 
 ---
 
 ## 🚀 Installation & Lancement
 
 ### Prérequis
+
 - Java 17+
 - MySQL 8+
 - Maven 3.8+
+- Node.js 18+
 
-### Étape 1 — Créer la base de données MySQL
+---
+
+### Backend
+
+#### Étape 1 — Créer la base de données MySQL
 
 ```sql
 CREATE DATABASE lost_and_found_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### Étape 2 — Configurer `application.properties`
+#### Étape 2 — Importer le schéma SQL
+
+```bash
+mysql -u root -p lost_and_found_db < lost_and_found_db.sql
+```
+
+> Les tables sont également créées automatiquement au premier lancement (`ddl-auto=update`), mais l'import SQL est recommandé pour un environnement de production.
+
+#### Étape 3 — Configurer `application.properties`
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/lost_and_found_db
@@ -42,7 +64,7 @@ spring.datasource.username=TON_USERNAME
 spring.datasource.password=TON_PASSWORD
 ```
 
-### Étape 3 — Lancer l'application
+#### Étape 4 — Lancer l'API
 
 ```bash
 mvn spring-boot:run
@@ -50,7 +72,17 @@ mvn spring-boot:run
 
 L'API sera disponible sur : **http://localhost:8080**
 
-Les tables MySQL sont créées **automatiquement** au premier lancement (`ddl-auto=update`).
+---
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+L'interface sera disponible sur : **http://localhost:5173**
 
 ---
 
@@ -59,40 +91,40 @@ Les tables MySQL sont créées **automatiquement** au premier lancement (`ddl-au
 ```
 src/main/java/com/lostandfound/
 │
-├── LostAndFoundApplication.java     # Point d'entrée
+├── LostAndFoundApplication.java       # Point d'entrée
 │
 ├── config/
-│   ├── SecurityConfig.java          # Spring Security + JWT + CORS
-│   ├── WebSocketConfig.java         # WebSocket STOMP
-│   └── FileUploadConfig.java        # Servir les photos uploadées
+│   ├── SecurityConfig.java            # Spring Security + JWT + CORS
+│   ├── WebSocketConfig.java           # WebSocket STOMP
+│   └── FileUploadConfig.java          # Servir les photos uploadées
 │
 ├── entity/
-│   ├── User.java                    # Table users
-│   ├── Item.java                    # Table items
-│   ├── Match.java                   # Table matches
-│   ├── Message.java                 # Table messages
-│   └── Notification.java            # Table notifications
+│   ├── User.java                      # Table users
+│   ├── Item.java                      # Table items
+│   ├── Match.java                     # Table matches
+│   ├── Message.java                   # Table messages
+│   └── Notification.java              # Table notifications
 │
 ├── repository/
 │   ├── UserRepository.java
-│   ├── ItemRepository.java          # Avec requêtes GPS custom
+│   ├── ItemRepository.java            # Avec requêtes GPS custom
 │   ├── MatchRepository.java
 │   ├── MessageRepository.java
 │   └── NotificationRepository.java
 │
 ├── service/
-│   ├── AuthService.java             # Register / Login
-│   ├── ItemService.java             # CRUD + upload photo + trigger matching
-│   ├── MatchingService.java         # Algorithme de matching (score)
-│   ├── NotificationService.java     # Notifications in-app
-│   └── ChatService.java             # Messagerie + WebSocket
+│   ├── AuthService.java               # Register / Login
+│   ├── ItemService.java               # CRUD + upload photo + trigger matching
+│   ├── MatchingService.java           # Algorithme de matching (score)
+│   ├── NotificationService.java       # Notifications in-app
+│   └── ChatService.java               # Messagerie + WebSocket
 │
 ├── controller/
-│   ├── AuthController.java          # /api/auth/**
-│   ├── ItemController.java          # /api/items/**
-│   ├── ChatController.java          # /api/chat/**
-│   ├── NotificationController.java  # /api/notifications/**
-│   └── UserController.java          # /api/users/**
+│   ├── AuthController.java            # /api/auth/**
+│   ├── ItemController.java            # /api/items/**
+│   ├── ChatController.java            # /api/chat/**
+│   ├── NotificationController.java    # /api/notifications/**
+│   └── UserController.java            # /api/users/**
 │
 ├── dto/
 │   ├── request/
@@ -101,7 +133,7 @@ src/main/java/com/lostandfound/
 │   │   ├── ItemRequest.java
 │   │   └── MessageRequest.java
 │   └── response/
-│       ├── ApiResponse.java         # Wrapper générique
+│       ├── ApiResponse.java           # Wrapper générique
 │       ├── AuthResponse.java
 │       ├── ItemResponse.java
 │       ├── MatchResponse.java
@@ -110,11 +142,11 @@ src/main/java/com/lostandfound/
 │       └── UserResponse.java
 │
 ├── security/
-│   ├── JwtUtil.java                 # Génération + validation JWT
-│   └── JwtAuthFilter.java           # Filtre HTTP JWT
+│   ├── JwtUtil.java                   # Génération + validation JWT
+│   └── JwtAuthFilter.java             # Filtre HTTP JWT
 │
 └── exception/
-    └── GlobalExceptionHandler.java  # Gestion globale des erreurs
+    └── GlobalExceptionHandler.java    # Gestion globale des erreurs
 ```
 
 ---
@@ -139,6 +171,7 @@ Authorization: Bearer <token>
 | POST | `/api/auth/login` | Se connecter | ❌ |
 
 **Register :**
+
 ```json
 POST /api/auth/register
 {
@@ -149,6 +182,7 @@ POST /api/auth/register
 ```
 
 **Réponse :**
+
 ```json
 {
   "success": true,
@@ -174,11 +208,12 @@ POST /api/auth/register
 | GET | `/api/items?type=LOST` | Filtrer par type | ✅ |
 | GET | `/api/items/{id}` | Détail d'un objet | ✅ |
 | GET | `/api/items/search?q=sac+noir` | Recherche intelligente | ❌ |
-| GET | `/api/items/nearby?lat=18.07&lng=-15.95&radius=5` | Objets proches | ✅ |
+| GET | `/api/items/nearby?lat=18.07&lng=-15.95&radius=5` | Objets proches (GPS) | ✅ |
 | GET | `/api/items/user/me` | Mes objets | ✅ |
 | PATCH | `/api/items/{id}/resolve` | Marquer comme résolu | ✅ |
 
-**Publier un objet (multipart/form-data) :**
+**Publier un objet (`multipart/form-data`) :**
+
 ```
 POST /api/items
 Content-Type: multipart/form-data
@@ -198,15 +233,16 @@ photo: [fichier image]
 ```
 
 **Réponse (avec matchs automatiques) :**
+
 ```json
 {
   "success": true,
   "data": {
-    "item": { ... },
+    "item": { "..." : "..." },
     "matches": [
       {
         "id": 1,
-        "matchedItem": { ... },
+        "matchedItem": { "..." : "..." },
         "similarityScore": 75,
         "matchedKeywords": ["noir", "Nike"],
         "scoreLabel": "Forte"
@@ -228,6 +264,7 @@ photo: [fichier image]
 | PATCH | `/api/chat/{chatId}/read` | Marquer comme lu | ✅ |
 
 **Envoyer un message :**
+
 ```json
 POST /api/chat/send
 {
@@ -248,6 +285,8 @@ POST /api/chat/send
 | PATCH | `/api/notifications/{id}/read` | Marquer comme lue | ✅ |
 | PATCH | `/api/notifications/read-all` | Tout marquer comme lu | ✅ |
 
+> La navbar affiche en temps réel les compteurs de messages non lus et de notifications non lues.
+
 ---
 
 ### 👤 Users — `/api/users`
@@ -259,15 +298,13 @@ POST /api/chat/send
 
 ---
 
-## 🔌 WebSocket (Chat temps réel)
+## 🔌 WebSocket — Chat temps réel
 
-**Connexion :**
 ```javascript
 const socket = new SockJS('http://localhost:8080/ws');
 const stompClient = Stomp.over(socket);
 
 stompClient.connect({}, () => {
-  // S'abonner aux messages privés
   stompClient.subscribe('/user/queue/messages', (msg) => {
     const message = JSON.parse(msg.body);
     console.log('Nouveau message:', message);
@@ -279,7 +316,7 @@ stompClient.connect({}, () => {
 
 ## 🗄️ Schéma Base de données
 
-```sql
+```
 users         → id, name, email, password, avatar_url, reputation_score, ...
 items         → id, user_id, type (LOST/FOUND), title, description, photo_url,
                 category, keywords (JSON), color, latitude, longitude, address,
@@ -295,7 +332,7 @@ notifications → id, user_id, title, body, type, item_id, is_read, created_at
 
 ## 🤖 Algorithme de Matching
 
-Quand un objet est publié → le système cherche automatiquement des correspondances :
+Lors de la publication d'un objet, le système recherche automatiquement des correspondances :
 
 ```
 Même catégorie  → +35 points
@@ -306,21 +343,54 @@ Titre similaire → +5 points
 ─────────────────────────────
 Total max       → 100 points
 
-Score >= 80 → "Très forte"
-Score >= 60 → "Forte"
-Score >= 40 → "Possible"
-Score < 40  → "Faible" (ignoré)
+Score >= 80  →  "Très forte"
+Score >= 60  →  "Forte"
+Score >= 40  →  "Possible"
+Score < 40   →  ignoré
+```
+
+**Règles d'exclusion (faux matchs évités) :**
+- Les objets déjà marqués comme **résolus** sont ignorés
+- Les objets appartenant au **même utilisateur** sont exclus
+- Les objets de **catégories différentes** ne sont pas matchés
+
+---
+
+## 📂 Gestion des uploads
+
+Les images uploadées par les utilisateurs sont stockées dans le dossier `uploads/`.
+
+Ce dossier est **ignoré par Git** via `.gitignore` afin d'éviter de pousser des fichiers binaires dans le dépôt :
+
+```
+# .gitignore
+uploads/
 ```
 
 ---
 
 ## 🧪 Tester avec Postman
 
-1. Importe la collection Postman (crée manuellement les requêtes)
-2. Register → récupère le token
-3. Ajoute le token dans **Authorization → Bearer Token**
-4. Teste les endpoints
+1. Créer les requêtes manuellement dans Postman
+2. Appeler `POST /api/auth/register` → récupérer le `token`
+3. Dans chaque requête protégée : onglet **Authorization** → type **Bearer Token** → coller le token
+4. Tester les endpoints dans l'ordre : auth → items → chat → notifications
 
 ---
 
-**Développé avec ❤️ Spring Boot + MySQL + JWT**
+## 📜 Bonnes pratiques Git
+
+```bash
+# Ne jamais committer les fichiers sensibles
+uploads/
+*.env
+application-prod.properties
+
+# Toujours travailler sur une branche feature
+git checkout -b feature/mon-ajout
+git push origin feature/mon-ajout
+```
+
+---
+
+Développé avec ❤️ — Spring Boot · React · MySQL · JWT · WebSocket
