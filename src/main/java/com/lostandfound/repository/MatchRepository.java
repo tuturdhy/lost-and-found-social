@@ -1,0 +1,14 @@
+package com.lostandfound.repository;
+
+import com.lostandfound.entity.Match;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface MatchRepository extends JpaRepository<Match, Long> {
+    List<Match> findByLostUserIdOrFoundUserIdOrderByCreatedAtDesc(
+        Long lostUserId, Long foundUserId
+    );
+    List<Match> findByItemIdOrderBySimilarityScoreDesc(Long itemId);
+}
