@@ -3,6 +3,8 @@
 > Plateforme web/mobile de mise en relation entre personnes ayant perdu ou trouvé un objet.
 > Backend Spring Boot · Frontend React · Matching intelligent · Chat temps réel
 
+🔗 **Repository GitHub :** [https://github.com/tuturdhy/lost-and-found-social](https://github.com/tuturdhy/lost-and-found-social)
+
 ---
 
 ## 🛠️ Stack Technique
@@ -90,6 +92,38 @@ L'interface sera disponible sur : **http://localhost:5173**
 ---
 
 ## 📁 Structure du projet
+
+### Frontend
+
+```
+frontend/
+├── src/
+│   ├── api/
+│   │   └── axios.js                   # Instance Axios + intercepteurs JWT
+│   ├── components/
+│   │   ├── ItemCard.jsx               # Carte d'affichage d'un objet
+│   │   └── Navbar.jsx                 # Barre de navigation + badges dynamiques
+│   ├── context/
+│   │   └── AuthContext.jsx            # Contexte Auth global (token, user)
+│   ├── pages/
+│   │   ├── Chat.jsx                   # Interface de messagerie
+│   │   ├── Home.jsx                   # Liste des objets + filtres
+│   │   ├── ItemDetail.jsx             # Détail d'un objet + matchs
+│   │   ├── Login.jsx                  # Connexion
+│   │   ├── Profile.jsx                # Profil utilisateur
+│   │   ├── PublishItem.jsx            # Publier un objet perdu/trouvé
+│   │   └── Register.jsx              # Inscription
+│   ├── App.jsx                        # Routes React Router
+│   ├── main.jsx                       # Point d'entrée React
+│   └── index.css                      # Styles globaux (Tailwind)
+├── index.html
+├── package.json
+├── tailwind.config.js
+├── postcss.config.js
+└── vite.config.js
+```
+
+### Backend
 
 ```
 src/main/java/com/lostandfound/
@@ -236,6 +270,8 @@ item: {
 }
 photo: [fichier image]
 ```
+
+> ⚠️ Les keywords sont saisis dans le frontend sous forme de texte séparé par des virgules : `noir,Nike,tissu,sport` — puis convertis automatiquement en tableau JSON par le backend.
 
 **Réponse (avec matchs automatiques) :**
 
